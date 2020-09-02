@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb
+  namespace: test001
+spec:
+  selector:
+    matchLabels:
+      app: mariadb-server        
+  replicas: 1
+  template:
+    metadata:
+        labels:
+          app: mariadb-server
+    spec:
+      containers:
+      - name: mariadb
+        image: mariadb:10.1
+
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: randomepassword
+        - name: MYSQL_DATABASE
+          value: webwork
+        - name: MYSQL_USER
+          value: "webworkWrite"
+        - name: MYSQL_PASSWORD
+          value: passwordRW
+        
+        volumeMounts:
+          - mountPath: /var/lib/mysql
+            name: mysql-storage
+      volumes:
+      - name: mysql-storage
+        persistentVolumeClaim:
+          claimName: pvc-pv01
